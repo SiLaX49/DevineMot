@@ -23,6 +23,8 @@ import verifyToken from "./utils/verifyToken.js";
 import { checkRole } from "./middleware/roleMiddleware.js";
 import { basicAuth } from "./middleware/authBackend.js";
 
+
+
 dotenv.config();
 
 const app = express();
@@ -41,19 +43,20 @@ app.get("/", (req, res) => {
 /* ===============================
 📂 Gestion des fichiers NDJSON
 ================================ */
+import { DRAWING_CATEGORIES } from "./routes/games.js";
+
 const DATA_DIR = path.join(__dirname, "data");
-const DRAWING_CATEGORIES = ["cat", "shoe", "fish"];
 const BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/simplified";
 
 async function downloadDrawings() {
-  console.log("Vérification des fichiers NDJSON...");
+  console.log("📥 Vérification et téléchargement des fichiers NDJSON...");
   await fs.ensureDir(DATA_DIR);
 
   for (const category of DRAWING_CATEGORIES) {
     const localFilePath = path.join(DATA_DIR, `${category}.ndjson`);
     if (!fs.existsSync(localFilePath)) {
       try {
-        console.log(`Téléchargement de ${category}...`);
+        console.log(`🔄 Téléchargement de ${category}...`);
         const url = `${BASE_URL}/${category}.ndjson`;
         const response = await axios.get(url, { responseType: "stream" });
 
@@ -65,15 +68,16 @@ async function downloadDrawings() {
           writer.on("error", reject);
         });
 
-        console.log(`${category}.ndjson téléchargé avec succès.`);
+        console.log(`✅ ${category}.ndjson téléchargé avec succès.`);
       } catch (error) {
-        console.error(`Erreur lors du téléchargement de ${category}:`, error.message);
+        console.error(`❌ Erreur lors du téléchargement de ${category}:`, error.message);
       }
     } else {
-      console.log(`${category}.ndjson déjà présent.`);
+      console.log(`✅ ${category}.ndjson déjà présent.`);
     }
   }
 }
+
 
 /* ===============================
 🛡️ Configuration des Routes
@@ -84,7 +88,7 @@ app.use("/api/auth", authRoutes);
 
 // Routes protégées par JWT (Utilisateur connecté requis)
 app.use("/api/drawings", verifyToken, drawingsRoutes);
-app.use("/api/games", verifyToken, gamesRoutes);
+app.use("/api", verifyToken, gamesRoutes);
 app.use("/api/gallery", verifyToken, galleryRoutes);
 
 // Routes Admin

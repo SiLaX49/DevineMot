@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import './api.dart';
-import './auth.dart';
-import './accueil.dart';
-import './worst.dart';
+import 'api.dart';
+import 'auth.dart';
+import 'accueil.dart';
+import 'worst.dart';
+import 'game.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/auth': (context) => AuthPage(),
         '/home': (context) => AccueilPage(),
         '/worst': (context) => WorstDrawingPage(),
+        '/game': (context) => GamePage(),
         '/gallery': (context) => Scaffold(
           appBar: AppBar(
             title: Text('Galerie'),

@@ -1,15 +1,21 @@
 import jwt from "jsonwebtoken";
 
 const verifyToken = (req, res, next) => {
-  const token = req.header("Authorization");
-  if (!token) return res.status(401).json({ error: "Access Denied" });
+  const authHeader = req.header("Authorization");
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Token manquant ou mal formaté" });
+  }
+
+  const token = authHeader.split(" ")[1];
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
+    req.user = verified; // Ajoute les infos utilisateur dans req.user
     next();
   } catch (err) {
-    res.status(400).json({ error: "Invalid Token" });
+    console.error("❌ Token invalide :", err.message);
+    res.status(403).json({ error: "Token invalide" });
   }
 };
 

@@ -54,7 +54,27 @@ class ApiService {
     }
   }
 
+  static Future<Map<String, dynamic>> getGameData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
+    if (token == null) {
+      throw Exception('Token manquant');
+    }
+
+    final response = await http.get(
+      Uri.parse('$apiUrl/game'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Erreur API : ${response.body}');
+    }
+  }
 
   static Future<bool> register(String username, String email, String password) async {
     final response = await http.post(
@@ -81,5 +101,27 @@ class ApiService {
       return jsonDecode(response.body);
     }
     return null;
+  }
+
+  static Future<Map<String, dynamic>> getRandomGameDrawing() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null) {
+      throw Exception('Token manquant');
+    }
+
+    final response = await http.get(
+      Uri.parse('$apiUrl/game/random'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Erreur API : ${response.body}');
+    }
   }
 }
