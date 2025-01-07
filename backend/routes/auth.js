@@ -2,8 +2,19 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import verifyToken from "../utils/verifyToken.js";
+
 
 const router = express.Router();
+
+router.get('/auto-login', verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 
 router.post("/register", async (req, res) => {

@@ -5,7 +5,6 @@ import axios from "axios";
 import isOnline from "is-online";
 import { fileURLToPath } from "url";
 
-// Résolution pour __dirname dans ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -13,9 +12,8 @@ const router = express.Router();
 const DATA_DIR = path.join(__dirname, "../data");
 const BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/simplified";
 
-// Exemple de route : obtenir un dessin aléatoire
-router.get("/random/:category", async (req, res) => {
-  const { category } = req.params;
+router.get("/random", async (req, res) => {
+  const category = "cat"; // Catégorie par défaut
   const localFilePath = path.join(DATA_DIR, `${category}.ndjson`);
 
   try {
@@ -40,7 +38,8 @@ router.get("/random/:category", async (req, res) => {
       res.status(200).json(drawing);
     }
   } catch (err) {
-    res.status(500).json({ error: "Erreur lors du chargement du dessin.", details: err.message });
+    console.error("❌ Erreur API Drawing :", err.message);
+    res.status(500).json({ error: "Erreur serveur" });
   }
 });
 

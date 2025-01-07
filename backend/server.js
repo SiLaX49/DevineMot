@@ -18,6 +18,10 @@ import authRoutes from "./routes/auth.js";
 import gamesRoutes from "./routes/games.js";
 import galleryRoutes from "./routes/gallery.js";
 import drawingsRoutes from "./routes/drawings.js";
+import adminRoutes from "./routes/admin.js";
+import verifyToken from "./utils/verifyToken.js";
+import { checkRole } from "./middleware/roleMiddleware.js";
+import { basicAuth } from "./middleware/authBackend.js";
 
 dotenv.config();
 
@@ -25,19 +29,28 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Dossier pour stocker les dessins
+/* ===============================
+🏠 Route d'accueil
+================================ */
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Bienvenue sur l'API DevineMot ! Utilisez /api/auth/login pour vous connecter.",
+  });
+});
+
+/* ===============================
+📂 Gestion des fichiers NDJSON
+================================ */
 const DATA_DIR = path.join(__dirname, "data");
 const DRAWING_CATEGORIES = ["cat", "shoe", "fish"];
 const BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/simplified";
 
-// Fonction pour vérifier et télécharger les fichiers NDJSON
 async function downloadDrawings() {
   console.log("Vérification des fichiers NDJSON...");
   await fs.ensureDir(DATA_DIR);
 
   for (const category of DRAWING_CATEGORIES) {
     const localFilePath = path.join(DATA_DIR, `${category}.ndjson`);
-
     if (!fs.existsSync(localFilePath)) {
       try {
         console.log(`Téléchargement de ${category}...`);
@@ -62,19 +75,35 @@ async function downloadDrawings() {
   }
 }
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/drawings", drawingsRoutes);
-app.use("/api/games", gamesRoutes);
-app.use("/api/gallery", galleryRoutes);
+/* ===============================
+🛡️ Configuration des Routes
+================================ */
 
-// Connexion à MongoDB
+// Routes publiques
+app.use("/api/auth", authRoutes);
+
+// Routes protégées par JWT (Utilisateur connecté requis)
+app.use("/api/drawings", verifyToken, drawingsRoutes);
+app.use("/api/games", verifyToken, gamesRoutes);
+app.use("/api/gallery", verifyToken, galleryRoutes);
+
+// Routes Admin
+app.use("/api/admin", adminRoutes);
+
+// Routes Basic Auth (Optionnel)
+app.use("/api/sensitive", basicAuth, (req, res) => {
+  res.status(200).json({ message: "Route sensible avec Basic Auth." });
+});
+
+/* ===============================
+💾 Connexion à MongoDB
+================================ */
 mongoose
   .connect(process.env.MONGO_URI)
   .then(async () => {
-    console.log("MongoDB connected");
+    console.log("✅ MongoDB connected");
     await downloadDrawings();
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
-  .catch((err) => console.log("MongoDB connection error:", err));
+  .catch((err) => console.log("❌ MongoDB connection error:", err));
