@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import './api.dart';
 
-import './worst.dart';
-import './jouer.dart';
-
 class AccueilPage extends StatefulWidget {
   @override
   _AccueilPageState createState() => _AccueilPageState();
@@ -18,31 +15,6 @@ class _AccueilPageState extends State<AccueilPage> {
   void initState() {
     super.initState();
     _loadRandomDrawing();
-  // Déclaration des pages (context n'est pas utilisé directement ici)
-  late final List<Widget> _pages;
-
-  @override
-  void initState() {
-    super.initState();
-    _pages = [
-      Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => JouerPage()),
-            );
-          },
-          child: Text('Jouer'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.yellow, // Couleur du bouton
-            foregroundColor: Colors.black, // Couleur du texte
-          ),
-        ),
-      ),
-      WorstDrawingPage(),
-    ];
-
   }
 
   Future<void> _loadRandomDrawing() async {
@@ -76,12 +48,7 @@ class _AccueilPageState extends State<AccueilPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: Text('Devine le Mot'),
-        title: Text(
-          _selectedIndex == 0 ? 'Accueil' : 'Horrible Drawings',
-          style: TextStyle(color: Colors.black),
-        ),
         backgroundColor: Colors.yellow,
         centerTitle: true,
       ),
@@ -175,10 +142,6 @@ class _AccueilPageState extends State<AccueilPage> {
             label: 'Galerie',
           ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.yellow,
-        unselectedItemColor: Colors.black,
-        onTap: _onItemTapped,
       ),
     );
   }
