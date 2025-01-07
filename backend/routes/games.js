@@ -15,58 +15,40 @@ const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(__dirname, "../data");
 export const BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/simplified";
 
-// 🛠️ 5 Catégories pour le mode hors-ligne
+// Toutes les catégories disponibles télécharger
 export const DRAWING_CATEGORIES = [
   "aircraft carrier", "airplane", "alarm clock", "ambulance", "angel",
-    "animal migration", "ant", "anvil", "apple", "arm", "asparagus", "axe",
+    "animal migration", "ant", "anvil", "apple",
     "backpack", "banana", "bandage", "barn", "baseball", "basket",
-    "basketball", "bat", "bathtub", "beach", "bear", "beard", "bed", "bee",
-    "belt", "bench", "bicycle", "binoculars", "bird", "birthday cake",
-    "blackberry", "blueberry", "book", "boomerang", "bottlecap", "bowtie",
-    "bracelet", "brain", "bread", "bridge", "broccoli", "broom", "bucket",
-    "bulldozer", "bus", "bush", "butterfly", "cactus", "cake", "calculator",
+    "basketball", "bat", "beach", "bear", "beard", "bed", "bee","bench", "birthday cake",
+    "blackberry", "blueberry", "book", "boomerang",  "calculator",
     "calendar", "camel", "camera", "campfire", "candle", "cannon", "canoe",
     "car", "carrot", "castle", "cat", "ceiling fan", "cello", "cell phone",
-    "chair", "chandelier", "clock", "cloud",
-    "coffee cup", "compass", "computer", "cookie", "cooler", "couch", "cow",
-    "crab", "crayon", "crocodile", "crown", "cruise ship", "cup", "diamond",
-    "dishwasher", "dog", "dolphin", "donut", "door", "dragon", "dresser",
+    "chair", "chandelier", "clock", "cloud", "crown", "cruise ship", "cup", "diamond",
+    "dishwasher", "dog", "donut", "door", "dragon", "dresser",
     "drill", "drums", "duck", "dumbbell", "ear", "elbow", "elephant",
-    "envelope", "eraser", "eye", "eyeglasses", "face", "fan", "feather",
-    "fence", "finger", "fire hydrant", "fireplace", "firetruck", "fish",
+    "envelope", "eraser", "eye", "eyeglasses", "face", "fan", "feather", "fireplace", "firetruck", "fish",
     "flamingo", "flashlight", "flip flops", "floor lamp", "flower",
     "flying saucer", "foot", "fork", "frog", "frying pan", "giraffe",
     "golf club", "grapes", "guitar", "tree"
 ];
 
-// 🛠️ Toutes les catégories disponibles pour le mode en ligne
+// Toutes les catégories disponibles
 export const ALL_CATEGORIES = [
   "aircraft carrier", "airplane", "alarm clock", "ambulance", "angel",
-  "animal migration", "ant", "anvil", "apple", "arm", "asparagus", "axe",
-  "backpack", "banana", "bandage", "barn", "baseball", "basket",
-  "basketball", "bat", "bathtub", "beach", "bear", "beard", "bed", "bee",
-  "belt", "bench", "bicycle", "binoculars", "bird", "birthday cake",
-  "blackberry", "blueberry", "book", "boomerang", "bottlecap", "bowtie",
-  "bracelet", "brain", "bread", "bridge", "broccoli", "broom", "bucket",
-  "bulldozer", "bus", "bush", "butterfly", "cactus", "cake", "calculator",
-  "calendar", "camel", "camera", "campfire", "candle", "cannon", "canoe",
-  "car", "carrot", "castle", "cat", "ceiling fan", "cello", "cell phone",
-  "chair", "chandelier", "church", "circle", "clarinet", "clock", "cloud",
-  "coffee cup", "compass", "computer", "cookie", "cooler", "couch", "cow",
-  "crab", "crayon", "crocodile", "crown", "cruise ship", "cup", "diamond",
-  "dishwasher", "dog", "dolphin", "donut", "door", "dragon", "dresser",
-  "drill", "drums", "duck", "dumbbell", "ear", "elbow", "elephant",
-  "envelope", "eraser", "eye", "eyeglasses", "face", "fan", "feather",
-  "fence", "finger", "fire hydrant", "fireplace", "firetruck", "fish",
-  "flamingo", "flashlight", "flip flops", "floor lamp", "flower",
-  "flying saucer", "foot", "fork", "frog", "frying pan", "giraffe",
-  "golf club", "grapes", "guitar", "hamburger", "hammer", "hat",
-  "headphones", "helicopter", "helmet", "hockey stick", "horse",
-  "hospital", "hot dog", "house", "ice cream", "key", "laptop", "leaf",
-  "lion", "lobster", "map", "microphone", "motorbike", "mushroom", "ocean",
-  "piano", "police car", "potato", "rabbit", "rainbow", "scissors",
-  "shark", "sheep", "shoe", "snake", "snowman", "spider", "star", "sword",
-  "tree", "t-shirt", "zebra"
+      "animal migration", "ant", "anvil", "apple",
+      "backpack", "banana", "bandage", "barn", "baseball", "basket",
+      "basketball", "bat", "beach", "bear", "beard", "bed", "bee", "bench", "birthday cake",
+      "blackberry", "blueberry", "book", "boomerang",  "calculator",
+      "calendar", "camel", "camera", "campfire", "candle", "cannon", "canoe",
+      "car", "carrot", "castle", "cat", "ceiling fan", "cello", "cell phone",
+      "chair", "chandelier", "clock", "cloud", "crown", "cruise ship", "cup", "diamond",
+      "dishwasher", "dog", "donut", "door", "dragon", "dresser",
+      "drill", "drums", "duck", "dumbbell", "ear", "elbow", "elephant",
+      "envelope", "eraser", "eye", "eyeglasses", "face", "fan", "feather", "fireplace", "firetruck", "fish",
+      "flamingo", "flashlight", "flip flops", "floor lamp", "flower",
+      "flying saucer", "foot", "fork", "frog", "frying pan", "giraffe",
+      "golf club", "grapes", "guitar", "tree"
 ];
 
 // 🛠️ Traductions des catégories pour affichage côté utilisateur
