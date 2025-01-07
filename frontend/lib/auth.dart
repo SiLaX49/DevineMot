@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import './accueil.dart';
+import './api.dart';
+
 
 class AuthPage extends StatefulWidget {
   @override
@@ -7,46 +9,65 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  bool isLoginMode = true; // Toggle pour basculer entre Login et Register
 
-  void _login() {
-    final email = emailController.text;
+  void _authenticate() async {
+    final username = usernameController.text;
     final password = passwordController.text;
+    final email = emailController.text;
 
-    if (email == 'test' && password == '123') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AccueilPage()),
-      );
+    if (isLoginMode) {
+      final token = await ApiService.login(username, password);
+      if (token != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AccueilPage()),
+        );
+      } else {
+        _showErrorDialog('Échec de la connexion');
+      }
     } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Erreur'),
-          content: Text('Identifiants incorrects.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
+      final success = await ApiService.register(username, email, password);
+      if (success) {
+        setState(() {
+          isLoginMode = true;
+        });
+      } else {
+        _showErrorDialog('Échec de l\'inscription');
+      }
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Erreur'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white, // Couleur de fond blanche
-        elevation: 0, // Supprime l'ombre de l'AppBar
+        backgroundColor: Colors.white,
+        elevation: 0,
         centerTitle: true,
         title: Text(
           'Devine Mot',
           style: TextStyle(
-            color: Colors.yellow, // Titre en jaune
+            color: Colors.yellow,
             fontWeight: FontWeight.bold,
             fontSize: 24,
           ),
@@ -57,9 +78,14 @@ class _AuthPageState extends State<AuthPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if (!isLoginMode)
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(labelText: 'Email'),
+              ),
             TextField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              controller: usernameController,
+              decoration: InputDecoration(labelText: 'Nom d\'utilisateur'),
             ),
             TextField(
               controller: passwordController,
@@ -68,12 +94,22 @@ class _AuthPageState extends State<AuthPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _login,
+              onPressed: _authenticate,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.yellow, // Bouton en jaune
-                foregroundColor: Colors.black, // Texte du bouton en noir
+                backgroundColor: Colors.yellow,
+                foregroundColor: Colors.black,
               ),
-              child: Text('Se connecter'),
+              child: Text(isLoginMode ? 'Se connecter' : 'Créer un compte'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  isLoginMode = !isLoginMode;
+                });
+              },
+              child: Text(isLoginMode
+                  ? 'Pas de compte ? Créez-en un'
+                  : 'Vous avez déjà un compte ? Connectez-vous'),
             ),
           ],
         ),
