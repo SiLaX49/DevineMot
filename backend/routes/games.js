@@ -13,6 +13,7 @@ const __dirname = path.dirname(__filename);
 
 // ⚙️ Dossier des fichiers NDJSON
 const DATA_DIR = path.join(__dirname, "../data");
+export const BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/simplified";
 
 // 🛠️ 5 Catégories pour le mode hors-ligne
 export const DRAWING_CATEGORIES = [

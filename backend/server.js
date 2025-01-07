@@ -22,6 +22,7 @@ import adminRoutes from "./routes/admin.js";
 import verifyToken from "./utils/verifyToken.js";
 import { checkRole } from "./middleware/roleMiddleware.js";
 import { basicAuth } from "./middleware/authBackend.js";
+import { BASE_URL } from "./routes/games.js";
 
 
 
@@ -46,7 +47,6 @@ app.get("/", (req, res) => {
 import { DRAWING_CATEGORIES } from "./routes/games.js";
 
 const DATA_DIR = path.join(__dirname, "data");
-const BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/simplified";
 
 async function downloadDrawings() {
   console.log("📥 Vérification et téléchargement des fichiers NDJSON...");
