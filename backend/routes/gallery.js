@@ -1,52 +1,44 @@
 import express from "express";
+import jwt from "jsonwebtoken";
 import Gallery from "../models/Gallery.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
-// Ajouter un dessin à la galerie
+// Ajouter un dessin ou une image à la galerie
 router.post("/add", async (req, res) => {
-  const { drawingId } = req.body;
+  const { image } = req.body;
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Token manquant" });
+  }
+
+  if (!image) {
+    return res.status(400).json({ message: "L'image est requise" });
+  }
 
   try {
-    const existingEntry = await Gallery.findOne({ drawingId });
-    if (existingEntry) {
-      return res.status(400).json({ message: "Dessin déjà présent dans la galerie." });
+    // Décoder le token JWT
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    // Vérifier que l'utilisateur existe
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable" });
     }
 
-    const newEntry = new Gallery({ drawingId });
+    // Enregistrer l'image
+    const newEntry = new Gallery({
+      image,
+      addedBy: userId,
+    });
     await newEntry.save();
 
-    res.status(201).json({ message: "Dessin ajouté à la galerie." });
+    res.status(201).json({ message: "Image ajoutée à la galerie avec succès." });
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Voter pour un dessin
-router.post("/vote", async (req, res) => {
-  const { galleryId } = req.body;
-
-  try {
-    const galleryEntry = await Gallery.findById(galleryId);
-    if (!galleryEntry) {
-      return res.status(404).json({ message: "Dessin non trouvé." });
-    }
-
-    galleryEntry.totalVotes++;
-    await galleryEntry.save();
-
-    res.status(200).json({ message: "Vote enregistré." });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Obtenir tous les dessins de la galerie
-router.get("/", async (req, res) => {
-  try {
-    const gallery = await Gallery.find().populate("drawingId");
-    res.status(200).json(gallery);
-  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
