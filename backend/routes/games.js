@@ -18,9 +18,10 @@ export const BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/s
 // Toutes les catégories disponibles télécharger
 export const DRAWING_CATEGORIES = [
   "aircraft carrier", "airplane", "alarm clock", "ambulance", "angel",
-    "animal migration", "ant", "anvil", "apple",
+    "animal migration", "ant", "anvil", "apple", "arm", "asparagus", "axe",
     "backpack", "banana", "bandage", "barn", "baseball", "basket",
-    "basketball", "bat", "beach", "bear", "beard", "bed", "bee","bench", "birthday cake",
+    "basketball", "bat", "beach", "bear", "beard", "bed", "bee",
+    "belt", "bench", "birthday cake",
     "blackberry", "blueberry", "book", "boomerang",  "calculator",
     "calendar", "camel", "camera", "campfire", "candle", "cannon", "canoe",
     "car", "carrot", "castle", "cat", "ceiling fan", "cello", "cell phone",
@@ -36,9 +37,10 @@ export const DRAWING_CATEGORIES = [
 // Toutes les catégories disponibles
 export const ALL_CATEGORIES = [
   "aircraft carrier", "airplane", "alarm clock", "ambulance", "angel",
-      "animal migration", "ant", "anvil", "apple",
+      "animal migration", "ant", "anvil", "apple", "arm", "asparagus", "axe",
       "backpack", "banana", "bandage", "barn", "baseball", "basket",
-      "basketball", "bat", "beach", "bear", "beard", "bed", "bee", "bench", "birthday cake",
+      "basketball", "bat", "beach", "bear", "beard", "bed", "bee",
+      "belt", "bench", "birthday cake",
       "blackberry", "blueberry", "book", "boomerang",  "calculator",
       "calendar", "camel", "camera", "campfire", "candle", "cannon", "canoe",
       "car", "carrot", "castle", "cat", "ceiling fan", "cello", "cell phone",
