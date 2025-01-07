@@ -6,21 +6,44 @@ const String apiUrl = 'http://localhost:5000/api';
 
 class ApiService {
   static Future<String?> login(String username, String password) async {
-    final response = await http.post(
-      Uri.parse('$apiUrl/auth/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': username, 'password': password}),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'username': username, 'password': password}),
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final token = data['token'];
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
-      return token;
+      print('🔄 Status Code: ${response.statusCode}');
+      print('🔄 Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final token = data['token'];
+        final userId = data['userId']; // Récupération de l'ID utilisateur
+
+        if (token == null) {
+          throw Exception('Token manquant dans la réponse API');
+        }
+
+        final prefs = await SharedPreferences.getInstance();
+        if (userId != null) {
+          await prefs.setString('userId', userId); // Stocke l'ID utilisateur si disponible
+          print('✅ User ID');
+        } else {
+          print('⚠️ Avertissement : User ID non retourné par l\'API');
+        }
+
+        print('✅ Token');
+        return token;
+      } else {
+        throw Exception('Échec de la connexion : ${response.body}');
+      }
+    } catch (e) {
+      print('❌ Erreur lors de la connexion : $e');
+      rethrow;
     }
-    return null;
   }
+
 
   // Méthode pour obtenir un dessin aléatoire par catégorie
   static Future<Map<String, dynamic>?> getRandomDrawing({String category = 'cat'}) async {
@@ -32,7 +55,7 @@ class ApiService {
       return null;
     }
 
-    print('🔑 Token JWT : $token');
+    print('🔑 Token JWT ');
 
     final response = await http.get(
       Uri.parse('$apiUrl/drawings/random/$category'),
@@ -75,6 +98,32 @@ class ApiService {
       throw Exception('Erreur API : ${response.body}');
     }
   }
+
+  static Future<void> saveDrawing(String image) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null) {
+      throw Exception('Token manquant');
+    }
+
+    final response = await http.post(
+      Uri.parse('$apiUrl/gallery/add'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'image': image}),
+    );
+
+    print('🔄 Status Code: ${response.statusCode}');
+    print('🔄 Response Body: ${response.body}');
+
+    if (response.statusCode != 201) {
+      throw Exception('Erreur API : ${response.body}');
+    }
+  }
+
 
   static Future<bool> register(String username, String email, String password) async {
     final response = await http.post(

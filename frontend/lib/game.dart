@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 import './api.dart';
 
 class GamePage extends StatefulWidget {
@@ -11,6 +13,8 @@ class _GamePageState extends State<GamePage> {
   bool isLoading = true;
   String? userAnswer;
   String? feedbackMessage;
+  bool showNextButton = false;
+  int score = 0;
 
   @override
   void initState() {
@@ -22,6 +26,7 @@ class _GamePageState extends State<GamePage> {
     setState(() {
       isLoading = true;
       feedbackMessage = null;
+      showNextButton = false;
     });
 
     try {
@@ -29,6 +34,11 @@ class _GamePageState extends State<GamePage> {
       setState(() {
         drawingData = data;
         isLoading = false;
+      });
+      Timer(Duration(seconds: 10), () {
+        setState(() {
+          showNextButton = true;
+        });
       });
     } catch (e) {
       setState(() {
@@ -42,13 +52,49 @@ class _GamePageState extends State<GamePage> {
     if (userAnswer != null && userAnswer!.toLowerCase() == drawingData?['word'].toLowerCase()) {
       setState(() {
         feedbackMessage = '✅ Bonne réponse !';
+        score += 10; // Ajoute 10 points pour une bonne réponse
+        userAnswer = ''; // Réinitialise le texte
       });
     } else {
       setState(() {
         feedbackMessage = '❌ Mauvaise réponse, essaye encore.';
+        userAnswer = ''; // Réinitialise le texte
       });
     }
   }
+
+  Future<void> _saveDrawing() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erreur : Token manquant'))
+        );
+        return;
+      }
+
+      final image = drawingData?['image']; // Assure-toi que drawingData contient une URL d'image
+
+      if (image == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erreur : URL de l\'image manquante'))
+        );
+        return;
+      }
+
+      await ApiService.saveDrawing(image);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Dessin ajouté à la galerie avec succès !'))
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur : $e'))
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +117,11 @@ class _GamePageState extends State<GamePage> {
                 painter: DrawingPainter(drawingData?['drawing']),
               ),
             ),
+            SizedBox(height: 10),
+            IconButton(
+              icon: Icon(Icons.star, color: Colors.yellow),
+              onPressed: _saveDrawing,
+            ),
             SizedBox(height: 20),
             TextField(
               decoration: InputDecoration(
@@ -80,6 +131,7 @@ class _GamePageState extends State<GamePage> {
               onChanged: (value) {
                 userAnswer = value;
               },
+              controller: TextEditingController(text: userAnswer),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -97,10 +149,13 @@ class _GamePageState extends State<GamePage> {
                     color: feedbackMessage!.contains('✅') ? Colors.green : Colors.red,
                   )),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _loadRandomDrawing,
-              child: Text('Nouveau Dessin'),
-            ),
+            if (showNextButton)
+              ElevatedButton(
+                onPressed: _loadRandomDrawing,
+                child: Text('Suivant'),
+              ),
+            SizedBox(height: 20),
+            Text('Score: $score', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
         ),
       ),

@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 // Importation des routes
 import authRoutes from "./routes/auth.js";
 import gamesRoutes from "./routes/games.js";
-import galleryRoutes from "./routes/gallery.js";
+import gallery from "./routes/gallery.js";
 import drawingsRoutes from "./routes/drawings.js";
 import adminRoutes from "./routes/admin.js";
 import verifyToken from "./utils/verifyToken.js";
@@ -89,7 +89,7 @@ app.use("/api/auth", authRoutes);
 // Routes protégées par JWT (Utilisateur connecté requis)
 app.use("/api/drawings", verifyToken, drawingsRoutes);
 app.use("/api", verifyToken, gamesRoutes);
-app.use("/api/gallery", verifyToken, galleryRoutes);
+app.use("/api/gallery", verifyToken, gallery);
 
 // Routes Admin
 app.use("/api/admin", adminRoutes);
