@@ -65,9 +65,9 @@ flutter run
 
 Exemple de configuration pour le backend :
 ```env
-DB_URI=mongodb://localhost:27017/devinemot
-JWT_SECRET=your_jwt_secret
-PORT=3000
+MONGO_URI=mongodb://127.0.0.1:27017/devinemot
+JWT_SECRET=MaSuperCleSecrete
+PORT=5000
 ```
 
 ---
