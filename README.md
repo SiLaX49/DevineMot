@@ -1,19 +1,21 @@
-Voici un **README.md** basé sur nos précédentes discussions, en reprenant les fonctionnalités et objectifs évoqués :
+# 🖌️ **DevineMot**
+
+**Un quiz interactif où des dessins absurdes deviennent des devinettes !**
 
 ---
 
-# 🖌️ **DevineMot**
-
-**Un quiz interactif où une IA dessine, et vous devinez !**
-
 ## 📚 **Description du projet**
 
-**DevineMot** est une application ludique où une **IA dessine des objets** de manière volontairement **exagérée et humoristique**, et les joueurs doivent **deviner ce que représente le dessin**. L'application est conçue pour offrir une expérience amusante et engageante, que ce soit en solo ou avec des amis.
+**DevineMot** est une application ludique où les joueurs doivent **deviner des dessins réalisés par d'autres utilisateurs**, inspirés par l'API **Quick, Draw!**. Les dessins sont souvent simples, parfois absurdes, et volontairement peu clairs, ajoutant une touche humoristique au défi.  
+
+Les joueurs peuvent participer à des sessions de quiz, voter pour les dessins les plus hilarants, et conserver un historique de leurs scores.
+
+---
 
 ## 🚀 **Technologies utilisées**
 
 ### **Frontend :**  
-- **Flutter** (Dart) : Interface utilisateur dynamique et multiplateforme.
+- **Flutter (Dart)** : Interface utilisateur moderne et multiplateforme.
 
 ### **Backend :**  
 - **Node.js** avec **Express.js** : Serveur RESTful.  
@@ -21,22 +23,26 @@ Voici un **README.md** basé sur nos précédentes discussions, en reprenant les
 - **dotenv** : Gestion sécurisée des variables d'environnement.  
 - **cors** : Gestion des requêtes cross-origin.
 
+---
+
 ## 🎮 **Fonctionnalités principales**
 
-- 🧠 **IA génératrice de dessins :** Intégration avec une API de type **Quick, Draw!** pour des esquisses générées aléatoirement.  
-- 🎲 **Quiz interactif :** Les joueurs doivent choisir entre des options absurdes (ex. : poisson, chaussure, requin).  
-- 🏆 **Système de score :** Historique des scores pour les utilisateurs connectés.  
-- 🖼️ **Galerie des meilleurs dessins :** Les utilisateurs peuvent voter pour les dessins les plus "horribles".  
-- 🔒 **Authentification :** Connexion facultative pour jouer, mais obligatoire pour sauvegarder les scores.  
-- 🗣️ **Speech-to-Text :** Possibilité de deviner les réponses via la reconnaissance vocale.  
-- 📶 **Mode hors-ligne :** Possibilité de jouer localement sans connexion Internet.  
+- 🎨 **Dessin avec Quick, Draw! :** Les utilisateurs dessinent des objets selon les suggestions de l'API **Quick, Draw!**.  
+- 🧠 **Quiz interactif :** Les autres joueurs tentent de deviner ce que représentent les dessins parmi plusieurs propositions absurdes.  
+- 🏆 **Système de score :** Chaque bonne réponse rapporte des points, et les scores sont sauvegardés pour les utilisateurs enregistrés.  
+- 🖼️ **Galerie des meilleurs dessins :** Les joueurs peuvent voter pour les dessins les plus drôles ou les plus absurdes.  
+- 🔒 **Authentification :** Jouer est possible sans connexion, mais s'enregistrer permet de sauvegarder ses scores et ses créations.  
+- 🗣️ **Reconnaissance vocale (Speech-to-Text) :** Possibilité de répondre via la voix.  
+- 📶 **Mode hors-ligne :** Jouer localement même sans connexion Internet.
+
+---
 
 ## 🛠️ **Installation et Configuration**
 
 ### **Prérequis :**
-- Node.js  
-- Flutter SDK  
-- MongoDB  
+- **Node.js**  
+- **Flutter SDK**  
+- **MongoDB**  
 
 ### **Installation Backend :**
 ```bash
@@ -54,43 +60,65 @@ flutter pub get
 flutter run
 ```
 
+---
+
 ## 🔑 **Variables d'environnement (.env)**
 
 Exemple de configuration pour le backend :
-```
+```env
 DB_URI=mongodb://localhost:27017/devinemot
 JWT_SECRET=your_jwt_secret
 PORT=3000
 ```
 
+---
+
+## 🧪 **Exécution des tests**
+
+- **Backend :**
+```bash
+npm run test
+```
+
+- **Frontend :**
+```bash
+flutter test
+```
+
+---
+
 ## 📊 **Organisation du projet (Git)**
 
-- **main **: Branche principale, aucune modification directe.  
-- **noa **: Branche de développement globale pour noa.  
-- **sohail ** : Branche de développement globale pour sohail.
- 
+- **main :** Branche principale, aucune modification directe.  
+- **noa :** Branche de développement globale.  
+- **sohail :** Branche de développement globale. 
+
+---
+
 ## 🤝 **Contribuer au projet**
 
 Les contributions sont les bienvenues !  
-1. Forkez le projet.  
-2. Créez une branche : `git checkout -b feature/your-feature`.  
-3. Commitez vos changements : `git commit -m "Add some feature"`.  
-4. Pushez votre branche : `git push origin feature/your-feature`.  
-5. Créez une Pull Request.
+1. **Forkez** le projet.  
+2. **Créez une branche :** `git checkout -b feature/your-feature`.  
+3. **Commitez vos changements :** `git commit -m "Add some feature"`.  
+4. **Pushez votre branche :** `git push origin feature/your-feature`.  
+5. **Créez une Pull Request.**
+
+---
 
 ## 📄 **Licence**
 
 Ce projet est sous licence **MIT**. Consultez le fichier [LICENSE](LICENSE) pour plus de détails.
 
+---
+
 ## 🧑‍💻 **Auteurs**
 
-- **Noa Morisseau** – *Chef de projet et développeur principal*  
-- **Contributeurs** – *À compléter selon les membres de l'équipe*
-
-## 🌟 **Objectif final**
-
-Créer une expérience ludique unique, alliant technologie moderne et amusement, pour permettre aux utilisateurs de partager des moments drôles autour d'une IA aux dessins absurdes.
+- **Noa Morisseau** – *développeur principal*  
+- **Sohaïl Monnier** – *développeur principal*
 
 ---
 
-Qu'en penses-tu ? Souhaites-tu ajouter ou ajuster des sections ?
+## 🌟 **Objectif final**
+
+Créer une expérience interactive amusante, où les utilisateurs peuvent dessiner, deviner, et rire ensemble autour de croquis délibérément chaotiques et humoristiques.
