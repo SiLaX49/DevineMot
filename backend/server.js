@@ -24,39 +24,41 @@ import { checkRole } from "./middleware/roleMiddleware.js";
 import { basicAuth } from "./middleware/authBackend.js";
 import { BASE_URL } from "./routes/games.js";
 
-
-
+// Chargement des variables d'environnement
 dotenv.config();
 
+// Initialisation de l'application Express
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors()); // Gestion des politiques de sécurité CORS
+app.use(bodyParser.json()); // Parse les requêtes JSON
 
-/* ===============================
-🏠 Route d'accueil
-================================ */
+
+// Route de base pour vérifier que l'API est fonctionnelle
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "Bienvenue sur l'API DevineMot ! Utilisez /api/auth/login pour vous connecter.",
   });
 });
 
-/* ===============================
-📂 Gestion des fichiers NDJSON
-================================ */
+
+// Importation des catégories de dessins depuis games.js
 import { DRAWING_CATEGORIES } from "./routes/games.js";
 
+// Définition du dossier de stockage des fichiers NDJSON
 const DATA_DIR = path.join(__dirname, "data");
 
+/**
+ * Télécharge les fichiers NDJSON pour chaque catégorie de dessin.
+ */
 async function downloadDrawings() {
-  console.log("📥 Vérification et téléchargement des fichiers NDJSON...");
-  await fs.ensureDir(DATA_DIR);
+  console.log("Vérification et téléchargement des fichiers NDJSON...");
+  await fs.ensureDir(DATA_DIR); // S'assure que le dossier existe
 
   for (const category of DRAWING_CATEGORIES) {
     const localFilePath = path.join(DATA_DIR, `${category}.ndjson`);
     if (!fs.existsSync(localFilePath)) {
       try {
-        console.log(`🔄 Téléchargement de ${category}...`);
+        console.log(`Téléchargement de ${category}...`);
         const url = `${BASE_URL}/${category}.ndjson`;
         const response = await axios.get(url, { responseType: "stream" });
 
@@ -68,46 +70,42 @@ async function downloadDrawings() {
           writer.on("error", reject);
         });
 
-        console.log(`✅ ${category}.ndjson téléchargé avec succès.`);
+        console.log(`${category}.ndjson téléchargé avec succès.`);
       } catch (error) {
-        console.error(`❌ Erreur lors du téléchargement de ${category}:`, error.message);
+        console.error(`Erreur lors du téléchargement de ${category}:`, error.message);
       }
     } else {
-      console.log(`✅ ${category}.ndjson déjà présent.`);
+      console.log(`${category}.ndjson déjà présent.`);
     }
   }
 }
 
 
-/* ===============================
-🛡️ Configuration des Routes
-================================ */
 
-// Routes publiques
+// Routes publiques (authentification)
 app.use("/api/auth", authRoutes);
 
-// Routes protégées par JWT (Utilisateur connecté requis)
+// Routes protégées par JWT (Token requis pour accéder)
 app.use("/api/drawings", verifyToken, drawingsRoutes);
 app.use("/api", verifyToken, gamesRoutes);
 app.use("/api/gallery", verifyToken, gallery);
 
-// Routes Admin
+// Routes Admin (Accès restreint)
 app.use("/api/admin", adminRoutes);
 
-// Routes Basic Auth (Optionnel)
+// Route protégée par une authentification basique
 app.use("/api/sensitive", basicAuth, (req, res) => {
   res.status(200).json({ message: "Route sensible avec Basic Auth." });
 });
 
-/* ===============================
-💾 Connexion à MongoDB
-================================ */
+
+// Connexion à la base de données MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(async () => {
-    console.log("✅ MongoDB connected");
-    await downloadDrawings();
+    console.log("MongoDB connecté");
+    await downloadDrawings(); // Téléchargement des fichiers NDJSON
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    app.listen(PORT, () => console.log(`Serveur en cours d'exécution sur le port ${PORT}`));
   })
-  .catch((err) => console.log("❌ MongoDB connection error:", err));
+  .catch((err) => console.log("Erreur de connexion MongoDB :", err));

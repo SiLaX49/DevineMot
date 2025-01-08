@@ -3,18 +3,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import './api.dart';
 
+/// Page principale du jeu.
+/// Permet aux utilisateurs de deviner un mot à partir d'un dessin généré par l'IA.
 class GamePage extends StatefulWidget {
   @override
   _GamePageState createState() => _GamePageState();
 }
 
+/// État associé à la page du jeu.
 class _GamePageState extends State<GamePage> {
-  Map<String, dynamic>? drawingData;
-  bool isLoading = true;
-  String? userAnswer;
-  String? feedbackMessage;
-  bool showNextButton = false;
-  int score = 0;
+  Map<String, dynamic>? drawingData; // Données du dessin actuel
+  bool isLoading = true; // Indique si le dessin est en cours de chargement
+  String? userAnswer; // Réponse de l'utilisateur
+  String? feedbackMessage; // Message de validation de la réponse
+  bool showNextButton = false; // Affiche le bouton suivant après un délai
+  int score = 0; // Score de l'utilisateur
 
   @override
   void initState() {
@@ -22,6 +25,7 @@ class _GamePageState extends State<GamePage> {
     _loadRandomDrawing();
   }
 
+  /// Charge un dessin aléatoire depuis l'API.
   Future<void> _loadRandomDrawing() async {
     setState(() {
       isLoading = true;
@@ -35,6 +39,8 @@ class _GamePageState extends State<GamePage> {
         drawingData = data;
         isLoading = false;
       });
+
+      // Affiche le bouton "Suivant" après 10 secondes
       Timer(Duration(seconds: 10), () {
         setState(() {
           showNextButton = true;
@@ -48,21 +54,24 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
+  /// Valide la réponse de l'utilisateur.
   void _validateAnswer() {
-    if (userAnswer != null && userAnswer!.toLowerCase() == drawingData?['word'].toLowerCase()) {
+    if (userAnswer != null &&
+        userAnswer!.toLowerCase() == drawingData?['word'].toLowerCase()) {
       setState(() {
-        feedbackMessage = '✅ Bonne réponse !';
+        feedbackMessage = 'Bonne réponse !';
         score += 10; // Ajoute 10 points pour une bonne réponse
         userAnswer = ''; // Réinitialise le texte
       });
     } else {
       setState(() {
-        feedbackMessage = '❌ Mauvaise réponse, essaye encore.';
+        feedbackMessage = 'Mauvaise réponse, essaye encore.';
         userAnswer = ''; // Réinitialise le texte
       });
     }
   }
 
+  /// Sauvegarde le dessin actuel dans la galerie.
   Future<void> _saveDrawing() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -70,31 +79,30 @@ class _GamePageState extends State<GamePage> {
 
       if (token == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur : Token manquant'))
+          SnackBar(content: Text('Erreur : Token manquant')),
         );
         return;
       }
 
-      final image = drawingData?['image']; // Assure-toi que drawingData contient une URL d'image
+      final image = drawingData?['image']; // URL du dessin
 
       if (image == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur : URL de l\'image manquante'))
+          SnackBar(content: Text('Erreur : URL de l\'image manquante')),
         );
         return;
       }
 
       await ApiService.saveDrawing(image);
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Dessin ajouté à la galerie avec succès !'))
+        SnackBar(content: Text('Dessin ajouté à la galerie avec succès !')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur : $e'))
+        SnackBar(content: Text('Erreur : $e')),
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +115,12 @@ class _GamePageState extends State<GamePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Text('Devine ce que représente ce dessin !', style: TextStyle(fontSize: 18)),
+            // Instructions du jeu
+            Text('Devine ce que représente ce dessin !',
+                style: TextStyle(fontSize: 18)),
             SizedBox(height: 20),
+
+            // Zone d'affichage du dessin
             Container(
               width: 300,
               height: 300,
@@ -118,11 +130,15 @@ class _GamePageState extends State<GamePage> {
               ),
             ),
             SizedBox(height: 10),
+
+            // Bouton pour sauvegarder le dessin
             IconButton(
               icon: Icon(Icons.star, color: Colors.yellow),
               onPressed: _saveDrawing,
             ),
             SizedBox(height: 20),
+
+            // Champ de texte pour la réponse de l'utilisateur
             TextField(
               decoration: InputDecoration(
                 labelText: 'Votre réponse',
@@ -134,6 +150,8 @@ class _GamePageState extends State<GamePage> {
               controller: TextEditingController(text: userAnswer),
             ),
             SizedBox(height: 20),
+
+            // Bouton de validation de la réponse
             ElevatedButton(
               onPressed: _validateAnswer,
               style: ElevatedButton.styleFrom(
@@ -142,20 +160,31 @@ class _GamePageState extends State<GamePage> {
               ),
               child: Text('Valider'),
             ),
+
+            // Affichage du message de feedback
             if (feedbackMessage != null)
-              Text(feedbackMessage!,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: feedbackMessage!.contains('✅') ? Colors.green : Colors.red,
-                  )),
+              Text(
+                feedbackMessage!,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: feedbackMessage!.contains('Bonne')
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             SizedBox(height: 20),
+
+            // Bouton pour passer au dessin suivant
             if (showNextButton)
               ElevatedButton(
                 onPressed: _loadRandomDrawing,
                 child: Text('Suivant'),
               ),
             SizedBox(height: 20),
-            Text('Score: $score', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+            // Affichage du score
+            Text('Score: $score',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -163,7 +192,7 @@ class _GamePageState extends State<GamePage> {
   }
 }
 
-// 🎨 Dessin Vectoriel
+/// Classe pour dessiner le croquis vectoriel sur le canvas.
 class DrawingPainter extends CustomPainter {
   final List<dynamic>? drawing;
 

@@ -8,16 +8,16 @@ const router = express.Router();
 
 router.get("/random", async (req, res) => {
   try {
-    // 🛠️ Choisir une catégorie aléatoire
+    //  Choisir une catégorie aléatoire
     const randomCategory = ALL_CATEGORIES[Math.floor(Math.random() * ALL_CATEGORIES.length)];
     console.log(`🛠️ Catégorie sélectionnée : ${randomCategory}`);
 
-    // 🛠️ Vérification de BASE_URL
+    //  Vérification de BASE_URL
     console.log(`🌐 BASE_URL actuel : ${BASE_URL}`);
     const url = `${BASE_URL}/${randomCategory}.ndjson`;
     console.log(`🌐 URL finale : ${url}`);
 
-    // 🌐 Tentative d'accès aux données en ligne
+    // Tentative d'accès aux données en ligne
     const response = await axios.get(url, { responseType: "stream" });
 
     const readline = require("readline");
@@ -51,7 +51,7 @@ router.get("/random", async (req, res) => {
   } catch (error) {
     console.error(`❌ Erreur API Drawing : ${error.message}`);
 
-    // 📂 Bascule vers les catégories locales
+    //  Bascule vers les catégories locales
     try {
       const randomCategory = DRAWING_CATEGORIES[Math.floor(Math.random() * DRAWING_CATEGORIES.length)];
       const localFilePath = `./data/${randomCategory}.ndjson`;

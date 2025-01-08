@@ -4,29 +4,20 @@ import verifyToken from "../utils/verifyToken.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import axios from "axios"; // Ajout d'axios pour les requêtes HTTP
 
 const router = express.Router();
 
-// 🛠️ Crée une variable équivalente à __dirname
+// Création de __dirname pour les modules ES
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ⚙️ Dossier des fichiers NDJSON
+// Définition du dossier contenant les fichiers NDJSON
 const DATA_DIR = path.join(__dirname, "../data");
 export const BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/simplified";
 
-// Toutes les catégories disponibles télécharger
+// Liste complète des catégories de dessins disponibles
 export const DRAWING_CATEGORIES = [
-  "apple", "banana", "bed", "book", "car", "cat", "dog", "fish",
-    "flower", "house", "moon", "sun", "tree", "star", "bird", "hat", "key",
-    "shoe", "train", "clock", "cloud", "hand", "face", "ear", "eye",
-    "chair", "table", "cup", "door", "hat", "leaf", "pants",
-    "bread", "cake", "bus",
-    "pencil", "fork", "spoon", "pizza"
-];
-
-// 🛠️ Liste simplifiée de catégories pour les utilisateurs
-export const ALL_CATEGORIES = [
   "apple", "banana", "bed", "book", "car", "cat", "dog", "fish",
   "flower", "house", "moon", "sun", "tree", "star", "bird", "hat", "key",
   "shoe", "train", "clock", "cloud", "hand", "face", "ear", "eye",
@@ -35,11 +26,13 @@ export const ALL_CATEGORIES = [
   "pencil", "fork", "spoon", "pizza"
 ];
 
-// 🛠️ Traductions simplifiées des catégories pour affichage côté utilisateur
+// Liste simplifiée des catégories pour affichage utilisateur
+export const ALL_CATEGORIES = [...DRAWING_CATEGORIES];
+
+// Traductions des catégories pour affichage côté utilisateur
 export const CATEGORIES = {
   "apple": "pomme",
   "banana": "banane",
-  "ball": "balle",
   "bed": "lit",
   "book": "livre",
   "car": "voiture",
@@ -68,41 +61,32 @@ export const CATEGORIES = {
   "table": "table",
   "cup": "tasse",
   "door": "porte",
-  "window": "fenêtre",
   "leaf": "feuille",
-  "shirt": "chemise",
-  "pants": "pantalon",
   "bread": "pain",
   "cake": "gâteau",
-  "milk": "lait",
-  "water": "eau",
-  "boat": "bateau",
   "bus": "bus",
-  "plane": "avion",
-  "phone": "téléphone",
-  "pen": "stylo",
   "pencil": "crayon",
-  "bag": "sac",
   "fork": "fourchette",
   "spoon": "cuillère",
   "pizza": "pizza"
-}
+};
 
+/// Route pour récupérer un dessin aléatoire
 router.get("/game/random", async (req, res) => {
   try {
-    // 🌐 Étape 1 : Choisir une catégorie aléatoire depuis toutes les catégories
+    // Étape 1 : Choisir une catégorie aléatoire parmi toutes les catégories disponibles
     let randomCategory = ALL_CATEGORIES[Math.floor(Math.random() * ALL_CATEGORIES.length)];
-    console.log(`🌐 Tentative de récupération en ligne (RAW) pour la catégorie : ${randomCategory}`);
+    console.log(`Tentative de récupération en ligne pour la catégorie : ${randomCategory}`);
 
     try {
-      // ✅ Tentative d'accès aux données RAW en ligne
+      // Tentative de récupération depuis une source en ligne
       const url = `${BASE_URL}/${randomCategory}.ndjson`;
       const response = await axios.get(url);
       const lines = response.data.split("\n").filter((line) => line);
       const randomIndex = Math.floor(Math.random() * lines.length);
       const drawingData = JSON.parse(lines[randomIndex]);
 
-      console.log(`✅ Récupération réussie depuis Internet (RAW) pour la catégorie : ${randomCategory}`);
+      console.log(`Récupération réussie depuis Internet pour la catégorie : ${randomCategory}`);
 
       return res.status(200).json({
         category: randomCategory,
@@ -110,15 +94,15 @@ router.get("/game/random", async (req, res) => {
         word: CATEGORIES[randomCategory] || randomCategory,
       });
     } catch (error) {
-      console.warn(`⚠️ Échec de la récupération en ligne pour ${randomCategory}. Erreur : ${error.message}`);
-      console.warn(`📂 Bascule en mode hors-ligne avec les catégories locales.`);
+      console.warn(`Échec de la récupération en ligne pour ${randomCategory}. Erreur : ${error.message}`);
+      console.warn(`Bascule en mode hors-ligne avec les fichiers locaux.`);
 
-      // 📂 Étape 2 : Fallback vers les catégories locales
+      // Étape 2 : Récupération depuis les fichiers locaux
       randomCategory = DRAWING_CATEGORIES[Math.floor(Math.random() * DRAWING_CATEGORIES.length)];
       const localFilePath = path.join(DATA_DIR, `${randomCategory}.ndjson`);
 
       if (!fs.existsSync(localFilePath)) {
-        console.error(`❌ Fichier NDJSON local manquant pour : ${randomCategory}`);
+        console.error(`Fichier NDJSON local manquant pour : ${randomCategory}`);
         return res.status(500).json({ error: "Fichier local introuvable et récupération en ligne échouée." });
       }
 
@@ -126,7 +110,7 @@ router.get("/game/random", async (req, res) => {
       const randomIndex = Math.floor(Math.random() * fileContent.length);
       const drawingData = JSON.parse(fileContent[randomIndex]);
 
-      console.log(`✅ Récupération réussie depuis le fichier local : ${randomCategory}`);
+      console.log(`Récupération réussie depuis le fichier local : ${randomCategory}`);
 
       return res.status(200).json({
         category: randomCategory,
@@ -135,7 +119,7 @@ router.get("/game/random", async (req, res) => {
       });
     }
   } catch (err) {
-    console.error(`❌ Erreur API Drawing : ${err.message}`);
+    console.error(`Erreur API Drawing : ${err.message}`);
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
