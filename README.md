@@ -32,7 +32,6 @@ Les joueurs peuvent participer à des sessions de quiz, voter pour les dessins l
 - 🏆 **Système de score :** Chaque bonne réponse rapporte des points, et les scores sont sauvegardés pour les utilisateurs enregistrés.  
 - 🖼️ **Galerie des meilleurs dessins :** Les joueurs peuvent voter pour les dessins les plus drôles ou les plus absurdes.  
 - 🔒 **Authentification :** Jouer est possible sans connexion, mais s'enregistrer permet de sauvegarder ses scores et ses créations.  
-- 🗣️ **Reconnaissance vocale (Speech-to-Text) :** Possibilité de répondre via la voix.  
 - 📶 **Mode hors-ligne :** Jouer localement même sans connexion Internet.
 
 ---
