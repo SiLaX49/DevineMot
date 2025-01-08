@@ -72,20 +72,6 @@ PORT=3000
 
 ---
 
-## 🧪 **Exécution des tests**
-
-- **Backend :**
-```bash
-npm run test
-```
-
-- **Frontend :**
-```bash
-flutter test
-```
-
----
-
 ## 📊 **Organisation du projet (Git)**
 
 - **main :** Branche principale, aucune modification directe.  
